@@ -1,6 +1,6 @@
 import BitcoinCore
 import Foundation
-import HsCryptoKit
+import WWCryptoKit
 
 public enum HodlerPluginError: Error {
     case unsupportedAddress

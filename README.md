@@ -1,6 +1,6 @@
 # Hodler.Swift
 
-`Hodler.Swift` is a plugin to `BitcoinCore`, that makes it possible to lock bitcoins until some time in the future. It relies on [CHECKSEQUENCEVERIFY](https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki) and [Relative time-locks](https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki). It may be used with other forks of Bitcoin that support them. `UnstooppableWallet` opts in this plugin and enables it for Bitcoin as an experimental feature.
+`Hodler.Swift` is a plugin to `BitcoinCore`, that makes it possible to lock bitcoins until some time in the future. It relies on [CHECKSEQUENCEVERIFY](https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki) and [Relative time-locks](https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki). It may be used with other forks of Bitcoin that support them. `Crypto Wallet` opts in this plugin and enables it for Bitcoin as an experimental feature.
 
 ## How it works
 
@@ -10,7 +10,7 @@ In [this](https://blockstream.info/tx/1cd11e80d04c82d098f19badb153ea12ec84cda408
 
 `OP_PUSHBYTES_3 070040 OP_CSV OP_DROP OP_DUP OP_HASH160 OP_PUSHBYTES_20 853316620ed93e4ade18f8218f9aa15dc36c768e OP_EQUALVERIFY OP_CHECKSIG`
 
-- `OP_PUSHBYTES_3 070040 OP_CSV OP_DROP` part ensures that needed amount of time is passed. Specifically `07` part of `070040` bytes says that it's locked for 1 hour. See [here](https://github.com/horizontalsystems/Hodler.Swift/blob/master/Sources/Hodler/Classes/Core/HodlerPlugin.swift#L16) and [here](https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki) for how it's evaluated.
+- `OP_PUSHBYTES_3 070040 OP_CSV OP_DROP` part ensures that needed amount of time is passed. Specifically `07` part of `070040` bytes says that it's locked for 1 hour. See [here](https://github.com/sunimp/Hodler.Swift/blob/master/Sources/Hodler/Classes/Core/HodlerPlugin.swift#L16) and [here](https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki) for how it's evaluated.
 - `OP_DUP OP_HASH160 OP_PUSHBYTES_20 853316620ed93e4ade18f8218f9aa15dc36c768e OP_EQUALVERIFY OP_CHECKSIG` part is the same locking script as of `P2PKH` output, that ensures the spender is the owner of the private key matching the public key hashed to `853316620ed93e4ade18f8218f9aa15dc36c768e`.
 
 ### Detection of incoming time-locked funds
@@ -44,10 +44,10 @@ This plugin can lock coins for `1 hour`, `1 month`, `half a year` and `1 year`. 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/horizontalsystems/Hodler.Swift.git", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/sunimp/Hodler.Swift.git", .upToNextMajor(from: "1.0.0"))
 ]
 ```
 
 ## License
 
-The `Hodler` toolkit is open source and available under the terms of the [MIT License](https://github.com/horizontalsystems/Hodler.Swift/blob/master/LICENSE).
+The `Hodler` toolkit is open source and available under the terms of the [MIT License](https://github.com/sunimp/Hodler.Swift/blob/master/LICENSE).

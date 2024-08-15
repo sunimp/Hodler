@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.10
 
 import PackageDescription
 
@@ -13,15 +13,15 @@ let package = Package(
             targets: ["Hodler"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/horizontalsystems/BitcoinCore.Swift.git", .upToNextMajor(from: "3.0.0")),
-        .package(url: "https://github.com/horizontalsystems/HsCryptoKit.Swift.git", .upToNextMajor(from: "1.2.1")),
+        .package(url: "https://github.com/sunimp/BitcoinCore.Swift.git", .upToNextMajor(from: "3.0.2")),
+        .package(url: "https://github.com/sunimp/WWCryptoKit.Swift.git", .upToNextMajor(from: "1.3.2")),
     ],
     targets: [
         .target(
             name: "Hodler",
             dependencies: [
                 .product(name: "BitcoinCore", package: "BitcoinCore.Swift"),
-                .product(name: "HsCryptoKit", package: "HsCryptoKit.Swift"),
+                .product(name: "WWCryptoKit", package: "WWCryptoKit.Swift"),
             ]
         ),
     ]
