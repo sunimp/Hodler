@@ -1,5 +1,13 @@
-import BitcoinCore
+//
+//  HodlerPlugin.swift
+//  Hodler
+//
+//  Created by Sun on 2024/8/21.
+//
+
 import Foundation
+
+import BitcoinCore
 import WWCryptoKit
 
 public enum HodlerPluginError: Error {
