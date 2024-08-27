@@ -9,13 +9,15 @@ import Foundation
 
 import BitcoinCore
 
+// MARK: - HodlerOutputData
+
 public class HodlerOutputData: IPluginOutputData {
     public let lockTimeInterval: HodlerPlugin.LockTimeInterval
     public let addressString: String
     public var approximateUnlockTime: Int? = nil
 
     static func parse(serialized: String?) throws -> HodlerOutputData {
-        guard let serialized = serialized else {
+        guard let serialized else {
             throw HodlerPluginError.invalidData
         }
 
@@ -28,10 +30,12 @@ public class HodlerOutputData: IPluginOutputData {
         let lockTimeIntervalStr = String(parts[0])
         let addressString = String(parts[1])
 
-        guard let int16 = UInt16(lockTimeIntervalStr), let lockTimeInterval = HodlerPlugin.LockTimeInterval(rawValue: int16) else {
+        guard
+            let int16 = UInt16(lockTimeIntervalStr),
+            let lockTimeInterval = HodlerPlugin.LockTimeInterval(rawValue: int16)
+        else {
             throw HodlerPluginError.invalidData
         }
-
 
         return HodlerOutputData(lockTimeInterval: lockTimeInterval, addressString: addressString)
     }
@@ -46,6 +50,8 @@ public class HodlerOutputData: IPluginOutputData {
     }
 
 }
+
+// MARK: - HodlerData
 
 public class HodlerData: IPluginData {
     let lockTimeInterval: HodlerPlugin.LockTimeInterval

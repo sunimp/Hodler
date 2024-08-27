@@ -10,11 +10,15 @@ import Foundation
 import BitcoinCore
 import WWCryptoKit
 
+// MARK: - HodlerPluginError
+
 public enum HodlerPluginError: Error {
     case unsupportedAddress
     case addressNotGiven
     case invalidData
 }
+
+// MARK: - HodlerPlugin
 
 public class HodlerPlugin {
     public enum LockTimeInterval: UInt16, CaseIterable, Codable {
@@ -51,7 +55,11 @@ public class HodlerPlugin {
     private let blockMedianTimeHelper: IHodlerBlockMedianTimeHelper
     private let publicKeyStorage: IHodlerPublicKeyStorage
 
-    public init(addressConverter: IHodlerAddressConverter, blockMedianTimeHelper: IHodlerBlockMedianTimeHelper, publicKeyStorage: IHodlerPublicKeyStorage) {
+    public init(
+        addressConverter: IHodlerAddressConverter,
+        blockMedianTimeHelper: IHodlerBlockMedianTimeHelper,
+        publicKeyStorage: IHodlerPublicKeyStorage
+    ) {
         self.addressConverter = addressConverter
         self.blockMedianTimeHelper = blockMedianTimeHelper
         self.publicKeyStorage = publicKeyStorage
@@ -80,9 +88,12 @@ public class HodlerPlugin {
     }
 
     private func csvRedeemScript(lockTimeInterval: LockTimeInterval, publicKeyHash: Data) -> Data {
-        OpCode.push(lockTimeInterval.valueInThreeBytes) + Data([OpCode.checkSequenceVerify, OpCode.drop]) + OpCode.p2pkhStart + OpCode.push(publicKeyHash) + OpCode.p2pkhFinish
+        OpCode.push(lockTimeInterval.valueInThreeBytes) + Data([OpCode.checkSequenceVerify, OpCode.drop]) + OpCode
+            .p2pkhStart + OpCode.push(publicKeyHash) + OpCode.p2pkhFinish
     }
 }
+
+// MARK: IPlugin
 
 extension HodlerPlugin: IPlugin {
     public func validate(address: Address) throws {
@@ -91,8 +102,8 @@ extension HodlerPlugin: IPlugin {
         }
     }
 
-    // Changes a recipient address of `mutableTransaction` to a P2SH address and adds a hint about time-lock script
-    // to pluginData, that's later added to the transaction in the form of OP_RETURN output.
+    /// Changes a recipient address of `mutableTransaction` to a P2SH address and adds a hint about time-lock script
+    /// to pluginData, that's later added to the transaction in the form of OP_RETURN output.
     public func processOutputs(mutableTransaction: MutableTransaction, pluginData: IPluginData, skipChecks: Bool = false) throws {
         guard let hodlerData = pluginData as? HodlerData else {
             throw HodlerPluginError.invalidData
@@ -108,19 +119,30 @@ extension HodlerPlugin: IPlugin {
             }
         }
 
-        let redeemScript = csvRedeemScript(lockTimeInterval: hodlerData.lockTimeInterval, publicKeyHash: recipientAddress.lockingScriptPayload)
+        let redeemScript = csvRedeemScript(
+            lockTimeInterval: hodlerData.lockTimeInterval,
+            publicKeyHash: recipientAddress.lockingScriptPayload
+        )
         let scriptHash = Crypto.ripeMd160Sha256(redeemScript)
         let newAddress = try addressConverter.convert(lockingScriptPayload: scriptHash, type: .p2sh)
 
         mutableTransaction.recipientAddress = newAddress
-        mutableTransaction.add(pluginData: OpCode.push(hodlerData.lockTimeInterval.valueInTwoBytes) + OpCode.push(recipientAddress.lockingScriptPayload), pluginId: id)
+        mutableTransaction.add(
+            pluginData: OpCode.push(hodlerData.lockTimeInterval.valueInTwoBytes) + OpCode
+                .push(recipientAddress.lockingScriptPayload),
+            pluginID: id
+        )
     }
 
-    // Detects a time-locked output by parsing a hint in the transaction's OP_RETURN data
-    // and matching it with the user's public keys
-    public func processTransactionWithNullData(transaction: FullTransaction, nullDataChunks: inout IndexingIterator<[Chunk]>) throws {
-        guard let lockTimeIntervalData = nullDataChunks.next()?.data, let publicKeyHash = nullDataChunks.next()?.data,
-              let lockTimeInterval = lockTimeIntervalFrom(data: lockTimeIntervalData)
+    /// Detects a time-locked output by parsing a hint in the transaction's OP_RETURN data
+    /// and matching it with the user's public keys
+    public func processTransactionWithNullData(
+        transaction: FullTransaction,
+        nullDataChunks: inout IndexingIterator<[Chunk]>
+    ) throws {
+        guard
+            let lockTimeIntervalData = nullDataChunks.next()?.data, let publicKeyHash = nullDataChunks.next()?.data,
+            let lockTimeInterval = lockTimeIntervalFrom(data: lockTimeIntervalData)
         else {
             throw HodlerPluginError.invalidData
         }
@@ -132,7 +154,7 @@ extension HodlerPlugin: IPlugin {
             return
         }
 
-        output.pluginId = id
+        output.pluginID = id
         output.pluginData = try HodlerOutputData(
             lockTimeInterval: lockTimeInterval,
             addressString: addressConverter.convert(lockingScriptPayload: publicKeyHash, type: .p2pkh).stringValue
@@ -156,8 +178,8 @@ extension HodlerPlugin: IPlugin {
         try Int(lockTimeIntervalFrom(output: output).sequenceNumber)
     }
 
-    // Parses a pluginData string to an instance of HodlerOutputData
-    // and evalutes approximate time when this output can be unlocked
+    /// Parses a pluginData string to an instance of HodlerOutputData
+    /// and evalutes approximate time when this output can be unlocked
     public func parsePluginData(from pluginData: String, transactionTimestamp: Int) throws -> IPluginOutputData {
         let hodlerOutputData = try HodlerOutputData.parse(serialized: pluginData)
 

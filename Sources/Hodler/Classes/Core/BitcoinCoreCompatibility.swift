@@ -9,6 +9,14 @@ import Foundation
 
 import BitcoinCore
 
-extension AddressConverterChain: IHodlerAddressConverter {}
-extension GrdbStorage: IHodlerPublicKeyStorage {}
-extension BlockMedianTimeHelper: IHodlerBlockMedianTimeHelper {}
+// MARK: - AddressConverterChain + IHodlerAddressConverter
+
+extension AddressConverterChain: IHodlerAddressConverter { }
+
+// MARK: - GrdbStorage + IHodlerPublicKeyStorage
+
+extension GrdbStorage: IHodlerPublicKeyStorage { }
+
+// MARK: - BlockMedianTimeHelper + IHodlerBlockMedianTimeHelper
+
+extension BlockMedianTimeHelper: IHodlerBlockMedianTimeHelper { }
