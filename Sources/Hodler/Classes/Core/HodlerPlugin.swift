@@ -130,7 +130,7 @@ extension HodlerPlugin: IPlugin {
         mutableTransaction.add(
             pluginData: OpCode.push(hodlerData.lockTimeInterval.valueInTwoBytes) + OpCode
                 .push(recipientAddress.lockingScriptPayload),
-            pluginID: id
+            pluginId: id
         )
     }
 
@@ -154,7 +154,7 @@ extension HodlerPlugin: IPlugin {
             return
         }
 
-        output.pluginID = id
+        output.pluginId = id
         output.pluginData = try HodlerOutputData(
             lockTimeInterval: lockTimeInterval,
             addressString: addressConverter.convert(lockingScriptPayload: publicKeyHash, type: .p2pkh).stringValue

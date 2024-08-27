@@ -34,9 +34,9 @@ This plugin can lock coins for `1 hour`, `1 month`, `half a year` and `1 year`. 
 
 ## Prerequisites
 
-* Xcode 10.0+
-* Swift 5+
-* iOS 13+
+* Xcode 15.0+
+* Swift 5.10+
+* iOS 14+
 
 ## Installation
 
@@ -44,7 +44,7 @@ This plugin can lock coins for `1 hour`, `1 month`, `half a year` and `1 year`. 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/sunimp/Hodler.Swift.git", .upToNextMajor(from: "2.0.5"))
+    .package(url: "https://github.com/sunimp/Hodler.Swift.git", .upToNextMajor(from: "2.0.6"))
 ]
 ```
 
