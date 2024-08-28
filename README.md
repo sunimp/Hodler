@@ -44,7 +44,7 @@ This plugin can lock coins for `1 hour`, `1 month`, `half a year` and `1 year`. 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/sunimp/Hodler.Swift.git", .upToNextMajor(from: "2.0.6"))
+    .package(url: "https://github.com/sunimp/Hodler.Swift.git", .upToNextMajor(from: "2.0.7"))
 ]
 ```
 
