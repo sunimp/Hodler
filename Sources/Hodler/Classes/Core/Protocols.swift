@@ -1,8 +1,7 @@
 //
 //  Protocols.swift
-//  Hodler
 //
-//  Created by Sun on 2024/8/21.
+//  Created by Sun on 2019/10/22.
 //
 
 import Foundation

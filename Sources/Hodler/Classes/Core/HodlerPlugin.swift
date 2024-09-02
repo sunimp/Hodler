@@ -1,8 +1,7 @@
 //
 //  HodlerPlugin.swift
-//  Hodler
 //
-//  Created by Sun on 2024/8/21.
+//  Created by Sun on 2019/10/9.
 //
 
 import Foundation
@@ -21,21 +20,27 @@ public enum HodlerPluginError: Error {
 // MARK: - HodlerPlugin
 
 public class HodlerPlugin {
+    // MARK: Nested Types
+
     public enum LockTimeInterval: UInt16, CaseIterable, Codable {
         case hour = 7 //  60 * 60 / 512
         case month = 5063 //  30 * 24 * 60 * 60 / 512
         case halfYear = 30881 // 183 * 24 * 60 * 60 / 512
         case year = 61593 // 365 * 24 * 60 * 60 / 512
 
+        // MARK: Static Properties
+
         private static let sequenceTimeSecondsGranularity = 512
         private static let relativeLockTimeLockMask: UInt32 = 0x400000 // (1 << 22)
 
-        var sequenceNumber: UInt32 {
-            LockTimeInterval.relativeLockTimeLockMask | UInt32(rawValue)
-        }
+        // MARK: Computed Properties
 
         public var valueInSeconds: Int {
             Int(rawValue) * LockTimeInterval.sequenceTimeSecondsGranularity
+        }
+
+        var sequenceNumber: UInt32 {
+            LockTimeInterval.relativeLockTimeLockMask | UInt32(rawValue)
         }
 
         var valueInTwoBytes: Data {
@@ -47,13 +52,22 @@ public class HodlerPlugin {
         }
     }
 
+    // MARK: Static Properties
+
     public static let id: UInt8 = OpCode.push(1)[0]
-    public var id: UInt8 { HodlerPlugin.id }
-    public var maxSpendLimit: Int? { nil }
+
+    // MARK: Properties
 
     private let addressConverter: IHodlerAddressConverter
     private let blockMedianTimeHelper: IHodlerBlockMedianTimeHelper
     private let publicKeyStorage: IHodlerPublicKeyStorage
+
+    // MARK: Computed Properties
+
+    public var id: UInt8 { HodlerPlugin.id }
+    public var maxSpendLimit: Int? { nil }
+
+    // MARK: Lifecycle
 
     public init(
         addressConverter: IHodlerAddressConverter,
@@ -65,12 +79,15 @@ public class HodlerPlugin {
         self.publicKeyStorage = publicKeyStorage
     }
 
+    // MARK: Functions
+
     private func lockTimeIntervalFrom(data lockTimeIntervalData: Data) -> LockTimeInterval? {
         guard lockTimeIntervalData.count == 2 else {
             return nil
         }
 
-        let int16 = lockTimeIntervalData.withUnsafeBytes { $0.baseAddress!.assumingMemoryBound(to: UInt16.self).pointee }
+        let int16 = lockTimeIntervalData
+            .withUnsafeBytes { $0.baseAddress!.assumingMemoryBound(to: UInt16.self).pointee }
         return LockTimeInterval(rawValue: int16)
     }
 
@@ -104,7 +121,11 @@ extension HodlerPlugin: IPlugin {
 
     /// Changes a recipient address of `mutableTransaction` to a P2SH address and adds a hint about time-lock script
     /// to pluginData, that's later added to the transaction in the form of OP_RETURN output.
-    public func processOutputs(mutableTransaction: MutableTransaction, pluginData: IPluginData, skipChecks: Bool = false) throws {
+    public func processOutputs(
+        mutableTransaction: MutableTransaction,
+        pluginData: IPluginData,
+        skipChecks: Bool = false
+    ) throws {
         guard let hodlerData = pluginData as? HodlerData else {
             throw HodlerPluginError.invalidData
         }
@@ -130,7 +151,7 @@ extension HodlerPlugin: IPlugin {
         mutableTransaction.add(
             pluginData: OpCode.push(hodlerData.lockTimeInterval.valueInTwoBytes) + OpCode
                 .push(recipientAddress.lockingScriptPayload),
-            pluginId: id
+            pluginID: id
         )
     }
 
@@ -154,7 +175,7 @@ extension HodlerPlugin: IPlugin {
             return
         }
 
-        output.pluginId = id
+        output.pluginID = id
         output.pluginData = try HodlerOutputData(
             lockTimeInterval: lockTimeInterval,
             addressString: addressConverter.convert(lockingScriptPayload: publicKeyHash, type: .p2pkh).stringValue
@@ -186,7 +207,8 @@ extension HodlerPlugin: IPlugin {
         // When checking if UTXO is spendable we use the best block median time.
         // The median time is 6 blocks earlier which is approximately equal to 1 hour.
         // Here we add 1 hour to show the time when this UTXO will be spendable
-        hodlerOutputData.approximateUnlockTime = transactionTimestamp + hodlerOutputData.lockTimeInterval.valueInSeconds + 3600
+        hodlerOutputData.approximateUnlockTime = transactionTimestamp + hodlerOutputData.lockTimeInterval
+            .valueInSeconds + 3600
 
         return hodlerOutputData
     }
@@ -201,10 +223,10 @@ extension HodlerPlugin: IPlugin {
     }
 
     public func incrementSequence(sequence: Int) -> Int {
-        let maxInc = 0x7f800000
+        let maxInc = 0x7F800000
         let currentInc = sequence & maxInc
         let newInc = min(currentInc + (1 << 23), maxInc)
-        let zeroIncSequence = (0xffffffff - maxInc) & sequence
+        let zeroIncSequence = (0xFFFFFFFF - maxInc) & sequence
         return zeroIncSequence | newInc
     }
 }

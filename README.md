@@ -32,11 +32,11 @@ For example, [this](https://blockstream.info/tx/bdc3e995100269c8813f291dd9ea5489
 
 This plugin can lock coins for `1 hour`, `1 month`, `half a year` and `1 year`. This is a limitation arising from the need of restoring those outputs using Simplified Payment Verification (SPV) `Bloom Filters`. Since each lock time generates different `P2SH` addresses, it wouldn't be possible to restore those outputs without knowing the exact lock time period in advance. So we generate 4 different addresses for each public key and use them in the bloom filters.
 
-## Prerequisites
+## Requirements
 
-* Xcode 15.0+
+* Xcode 15.4+
 * Swift 5.10+
-* iOS 14+
+* iOS 14.0+
 
 ## Installation
 
@@ -44,7 +44,7 @@ This plugin can lock coins for `1 hour`, `1 month`, `half a year` and `1 year`. 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/sunimp/Hodler.Swift.git", .upToNextMajor(from: "2.0.7"))
+    .package(url: "https://github.com/sunimp/Hodler.Swift.git", .upToNextMajor(from: "2.1.0"))
 ]
 ```
 
