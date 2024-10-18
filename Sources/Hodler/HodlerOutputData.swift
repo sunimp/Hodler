@@ -1,7 +1,8 @@
 //
 //  HodlerOutputData.swift
+//  Hodler
 //
-//  Created by Sun on 2019/10/10.
+//  Created by Sun on 2024/8/15.
 //
 
 import Foundation

@@ -1,13 +1,14 @@
 //
 //  HodlerPlugin.swift
+//  Hodler
 //
-//  Created by Sun on 2019/10/9.
+//  Created by Sun on 2024/8/15.
 //
 
 import Foundation
 
 import BitcoinCore
-import WWCryptoKit
+import SWCryptoKit
 
 // MARK: - HodlerPluginError
 
